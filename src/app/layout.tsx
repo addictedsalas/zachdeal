@@ -1,5 +1,5 @@
-import { Inter } from "next/font/google";
-import { Metadata } from "next";
+import type { Metadata } from 'next';
+import { Inter, Bebas_Neue } from 'next/font/google';
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -10,6 +10,12 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   weight: ["300", "400", "500", "600", "700"],
+});
+
+const bebasNeue = Bebas_Neue({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-bebas-neue',
 });
 
 export const metadata: Metadata = {
@@ -36,12 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
-      </head>
+    <html lang="en" className={`${inter.variable} ${bebasNeue.variable}`}>
       <body className="antialiased bg-bbd-charcoal text-bbd-ivory font-body">
         <CartProvider>
           <Header />

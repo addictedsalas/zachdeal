@@ -43,7 +43,7 @@ export default function Hero() {
         {/* Subheading */}
         <p className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
           Join thousands who have transformed their physique with<br />
-          Zach Deal's proven digital programs and premium supplements
+          Zach Deal&apos;s proven digital programs and premium supplements
         </p>
 
         {/* CTA Buttons */}

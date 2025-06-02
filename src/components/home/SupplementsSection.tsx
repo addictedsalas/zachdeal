@@ -49,9 +49,6 @@ export default function SupplementsSection() {
     }
   };
 
-  // Get the current 3 products to display
-  const visibleProducts = products.slice(currentIndex, currentIndex + 3);
-
   if (loading) {
     return (
       <section className="py-20 bg-bbd-black">
@@ -84,7 +81,7 @@ export default function SupplementsSection() {
             className={`flex transition-transform duration-500 ease-in-out ${isTransitioning ? '' : ''}`}
             style={{ transform: `translateX(-${(currentIndex / 3) * 100}%)` }}
           >
-            {products.map((product, index) => {
+            {products.map((product) => {
               const productImage = product.featuredImage || product.images.edges[0]?.node;
               const price = product.priceRange.minVariantPrice;
               const isOutOfStock = !product.availableForSale;

@@ -90,10 +90,10 @@ export default function CartDrawer() {
                             <li key={item.id} className="flex gap-4">
                               {/* Product Image */}
                               <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md bg-bbd-black/20">
-                                {item.merchandise.image ? (
+                                {item.merchandise.product.featuredImage ? (
                                   <Image
-                                    src={item.merchandise.image.url}
-                                    alt={item.merchandise.image.altText || item.merchandise.title}
+                                    src={item.merchandise.product.featuredImage.url}
+                                    alt={item.merchandise.product.featuredImage.altText || item.merchandise.title}
                                     fill
                                     className="object-cover object-center"
                                   />
@@ -125,8 +125,8 @@ export default function CartDrawer() {
                                   </div>
                                   <p className="text-sm font-medium text-bbd-ivory">
                                     {formatPrice(
-                                      item.merchandise.price.amount,
-                                      item.merchandise.price.currencyCode
+                                      item.merchandise.priceV2.amount,
+                                      item.merchandise.priceV2.currencyCode
                                     )}
                                   </p>
                                 </div>

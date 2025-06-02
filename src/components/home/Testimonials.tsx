@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 
 export default function Testimonials() {
@@ -78,7 +77,7 @@ export default function Testimonials() {
 
               {/* Quote */}
               <p className="text-gray-200 mb-6 italic">
-                "{testimonial.content}"
+                &ldquo;{testimonial.content}&rdquo;
               </p>
 
               {/* Author */}

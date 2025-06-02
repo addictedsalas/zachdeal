@@ -139,7 +139,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [cartId]);
+  }, [cartId, ensureCart]);
 
   const updateQuantity = useCallback(async (lineId: string, quantity: number) => {
     if (!cartId) return;
@@ -147,7 +147,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     try {
       setIsLoading(true);
       if (quantity === 0) {
-        await removeFromCart(lineId);
+        const updatedCart = await removeLineItem(cartId, lineId);
+        setCart(updatedCart);
       } else {
         const updatedCart = await updateLineItem(cartId, lineId, quantity);
         setCart(updatedCart);
