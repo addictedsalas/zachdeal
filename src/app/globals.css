@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Built By Deal Brand Colors */
+  --bbd-black: #000000;
+  --bbd-charcoal: #1A1B18;
+  --bbd-ivory: #EFEAE0;
+  --bbd-orange: #EE7F0E;
+  --bbd-gold: #FFC842;
+  
+  /* Default theme */
+  --background: var(--bbd-charcoal);
+  --foreground: var(--bbd-ivory);
+}
+
+@layer base {
+  /* Custom color tokens for Tailwind */
+  :root {
+    --color-bbd-black: var(--bbd-black);
+    --color-bbd-charcoal: var(--bbd-charcoal);
+    --color-bbd-ivory: var(--bbd-ivory);
+    --color-bbd-orange: var(--bbd-orange);
+    --color-bbd-gold: var(--bbd-gold);
+    
+    /* Font families */
+    --font-bebas: 'Bebas Neue', sans-serif;
+    --font-inter: 'Inter', sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: var(--bbd-charcoal);
+      --foreground: var(--bbd-ivory);
+    }
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-inter);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Remove default margins */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  /* Typography utilities */
+  .font-display {
+    font-family: var(--font-bebas);
+    letter-spacing: 0.02em;
+  }
+
+  .font-body {
+    font-family: var(--font-inter);
+  }
+}
