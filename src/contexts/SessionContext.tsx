@@ -62,17 +62,21 @@ export function SessionContextProvider({ children }: { children: React.ReactNode
       setUser(session?.user ?? null);
       setLoading(false);
 
-      // Handle sign in success - redirect to onboarding if new user
+      // Handle sign in success - redirect to plans if new user without subscription
       if (event === 'SIGNED_IN' && session?.user) {
-        // Check if user has completed onboarding
+        // Check if user has completed onboarding or has active subscription
         const { data: profile } = await supabase
           .from('profiles')
-          .select('goals, equipment')
+          .select('goals, equipment, stripe_status')
           .eq('id', session.user.id)
           .single();
 
-        if (!profile?.goals || !profile?.equipment) {
-          window.location.href = '/onboarding';
+        // If user has active subscription, redirect to dashboard
+        if (profile?.stripe_status === 'active') {
+          window.location.href = '/dashboard';
+        } else if (!profile?.goals || !profile?.equipment) {
+          // If user doesn't have goals/equipment set and no subscription, redirect to plans
+          window.location.href = '/plans';
         }
       }
     });

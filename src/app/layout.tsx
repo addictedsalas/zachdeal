@@ -7,6 +7,7 @@ import SocialBar from "@/components/layout/SocialBar";
 import { CartProvider } from "@/contexts/CartContext";
 import { SessionContextProvider } from "@/contexts/SessionContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import ConditionalLayout from "@/components/layout/ConditionalLayout";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -49,12 +50,9 @@ export default function RootLayout({
         <AuthProvider>
           <SessionContextProvider>
             <CartProvider>
-              <Header />
-              <main className="min-h-screen">
+              <ConditionalLayout>
                 {children}
-              </main>
-              <Footer />
-              <SocialBar />
+              </ConditionalLayout>
             </CartProvider>
           </SessionContextProvider>
         </AuthProvider>

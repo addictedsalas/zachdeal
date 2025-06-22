@@ -69,44 +69,18 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
-              
-              {/* Auth Section */}
-              {!loading && (
-                <>
-                  {user ? (
-                    <UserProfileDropdown />
-                  ) : (
-                    <Link
-                      href="/plans"
-                      className="inline-flex items-center px-4 py-2 bg-bbd-orange text-bbd-black font-bold text-sm rounded-md hover:bg-bbd-gold transition-all duration-200 transform hover:scale-105"
-                    >
-                      GET STARTED
-                      <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                      </svg>
-                    </Link>
-                  )}
-                </>
-              )}
-              
-              {/* Cart Button */}
+            </div>
+
+            {/* Right side - Cart, Auth, and CTA */}
+            <div className="hidden md:flex items-center space-x-4">
+              {/* Cart Icon */}
               <button
                 onClick={toggleCart}
                 className="relative p-2 text-bbd-ivory hover:text-bbd-orange transition-colors"
                 aria-label="Shopping cart"
               >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9" />
                 </svg>
                 {itemCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-bbd-orange text-bbd-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
@@ -114,38 +88,40 @@ export default function Header() {
                   </span>
                 )}
               </button>
+
+              {/* Authentication Section - Always show something */}
+              {user ? (
+                /* User is logged in - show profile dropdown */
+                <UserProfileDropdown />
+              ) : (
+                /* User is not logged in - show login and get started buttons */
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => setShowAuthModal(true)}
+                    className="text-bbd-ivory hover:text-bbd-orange transition-colors font-medium"
+                  >
+                    Login
+                  </button>
+                  <Link
+                    href="/plans"
+                    className="bg-gradient-to-r from-bbd-orange to-bbd-gold hover:from-bbd-gold hover:to-bbd-orange text-bbd-black font-bold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
+                  >
+                    Get Started
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center space-x-4">
-              {/* Mobile Auth Section */}
-              {!loading && !user && (
-                <Link
-                  href="/plans"
-                  className="inline-flex items-center px-3 py-1.5 bg-bbd-orange text-bbd-black font-bold text-xs rounded-md hover:bg-bbd-gold transition-all duration-200"
-                >
-                  GET STARTED
-                </Link>
-              )}
-              
               {/* Mobile Cart Button */}
               <button
                 onClick={toggleCart}
                 className="relative p-2 text-bbd-ivory hover:text-bbd-orange transition-colors"
                 aria-label="Shopping cart"
               >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9" />
                 </svg>
                 {itemCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-bbd-orange text-bbd-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
@@ -154,32 +130,17 @@ export default function Header() {
                 )}
               </button>
 
-              {/* Hamburger Menu */}
+              {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="text-bbd-ivory hover:text-bbd-orange transition-colors"
                 aria-label="Toggle menu"
               >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {isMenuOpen ? (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   ) : (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                   )}
                 </svg>
               </button>
@@ -203,12 +164,33 @@ export default function Header() {
                   </Link>
                 ))}
                 
-                {/* Mobile User Profile for authenticated users */}
-                {user && (
-                  <div className="border-t border-bbd-orange/20 pt-3 mt-3">
+                {/* Mobile Authentication Section */}
+                <div className="border-t border-bbd-orange/20 pt-3 mt-3">
+                  {user ? (
+                    /* User is logged in - show profile options */
                     <UserProfileDropdown />
-                  </div>
-                )}
+                  ) : (
+                    /* User is not logged in - show login and get started buttons */
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => {
+                          setShowAuthModal(true);
+                          setIsMenuOpen(false);
+                        }}
+                        className="block w-full text-left py-2 text-bbd-ivory hover:text-bbd-orange transition-colors font-medium"
+                      >
+                        Login
+                      </button>
+                      <Link
+                        href="/plans"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="block w-full text-center bg-gradient-to-r from-bbd-orange to-bbd-gold hover:from-bbd-gold hover:to-bbd-orange text-bbd-black font-bold py-2 px-4 rounded-lg transition-all duration-300"
+                      >
+                        Get Started
+                      </Link>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}

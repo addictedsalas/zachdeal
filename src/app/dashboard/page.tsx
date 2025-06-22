@@ -1,16 +1,23 @@
 'use client'
 
 import { useAuth } from '@/contexts/AuthContext'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import DashboardLayout from '@/components/dashboard/DashboardLayout'
+import TodayOverview from '@/components/dashboard/TodayOverview'
+import WeeklyPlanView from '@/components/dashboard/WeeklyPlanView'
+import VirtualAssistant from '@/components/dashboard/VirtualAssistant'
+import WorkoutPlan from '@/components/dashboard/WorkoutPlan'
 import DashboardMetrics from '@/components/dashboard/DashboardMetrics'
 import UpcomingWorkout from '@/components/dashboard/UpcomingWorkout'
 import ChatAgent from '@/components/dashboard/ChatAgent'
+import { WorkoutProvider } from '@/contexts/WorkoutContext'
 
 export default function DashboardPage() {
   const { user, profile, loading } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const [activeTab, setActiveTab] = useState('overview')
 
   useEffect(() => {
     if (!loading && !user) {
@@ -18,10 +25,25 @@ export default function DashboardPage() {
     }
   }, [user, loading, router])
 
+  useEffect(() => {
+    // Check for tab parameter from onboarding
+    const tab = searchParams.get('tab')
+    if (tab) {
+      setActiveTab(tab)
+    }
+  }, [searchParams])
+
+  useEffect(() => {
+    // Redirect to onboarding if not completed
+    if (!loading && user && profile && !profile.onboarding_completed) {
+      router.push('/onboarding')
+    }
+  }, [loading, user, profile, router])
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-bbd-charcoal flex items-center justify-center">
-        <div className="text-bbd-orange text-xl">Loading...</div>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-orange-500 text-xl">Loading...</div>
       </div>
     )
   }
@@ -35,52 +57,63 @@ export default function DashboardPage() {
 
   if (!hasActiveSubscription) {
     return (
-      <div className="min-h-screen bg-bbd-charcoal flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-bbd-ivory mb-4">
-            Subscription Required
-          </h1>
-          <p className="text-bbd-ivory/70 mb-6">
-            You need an active subscription to access the dashboard.
-          </p>
-          <button
-            onClick={() => router.push('/plans')}
-            className="bg-bbd-orange text-white px-6 py-3 rounded-lg hover:bg-bbd-orange/90 transition-colors"
-          >
-            View Plans
-          </button>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
+        <div className="max-w-md w-full text-center bg-gray-800/50 backdrop-blur-sm rounded-xl p-8 border border-orange-500/20">
+          <div className="mb-6">
+            <div className="w-16 h-16 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold text-gray-200 mb-2 font-bebas">
+              Subscription Required
+            </h1>
+            <p className="text-gray-200/70 mb-6">
+              You need an active subscription to access your personalized fitness dashboard and workout plans.
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={() => router.push('/plans')}
+                className="w-full bg-orange-500 hover:bg-orange-500/80 text-gray-900 font-semibold py-3 px-6 rounded-lg transition-colors"
+              >
+                Choose a Plan
+              </button>
+              <button
+                onClick={() => router.push('/')}
+                className="w-full border border-orange-500/30 text-orange-500 hover:bg-orange-500/10 font-semibold py-3 px-6 rounded-lg transition-colors"
+              >
+                Return Home
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     )
   }
 
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'plan':
+        return (
+          <WeeklyPlanView 
+            selectedPlan={profile.selected_workout_plan || 'Strength Builder'}
+            userProfile={profile}
+          />
+        )
+      case 'overview':
+      default:
+        return <TodayOverview userProfile={profile} />
+    }
+  }
+
   return (
-    <DashboardLayout>
-      <div className="p-6 space-y-6">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-bbd-ivory mb-2">
-            Hello, {profile.full_name || 'Athlete'}!
-          </h1>
-          <p className="text-bbd-ivory/70">
-            You have 245+ AI fitness tasks.
-          </p>
-        </div>
-
-        {/* Main Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Metrics */}
-          <div className="lg:col-span-2 space-y-6">
-            <DashboardMetrics />
-            <UpcomingWorkout />
-          </div>
-
-          {/* Right Column - Chat Agent */}
-          <div className="lg:col-span-1">
-            <ChatAgent />
-          </div>
-        </div>
-      </div>
-    </DashboardLayout>
+    <WorkoutProvider>
+      <DashboardLayout activeTab={activeTab} setActiveTab={setActiveTab}>
+        {renderTabContent()}
+        
+        {/* Virtual Assistant - Always present */}
+        <VirtualAssistant userProfile={profile} />
+      </DashboardLayout>
+    </WorkoutProvider>
   )
 }

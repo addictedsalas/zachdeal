@@ -15,6 +15,12 @@ CREATE TABLE profiles (
   subscription_tier TEXT CHECK (subscription_tier IN ('BASIC', 'PREMIUM', 'ELITE')),
   subscription_start_date TIMESTAMPTZ,
   subscription_end_date TIMESTAMPTZ,
+  onboarding_completed BOOLEAN DEFAULT false,
+  selected_workout_plan TEXT,
+  fitness_level TEXT CHECK (fitness_level IN ('beginner', 'intermediate', 'advanced')),
+  fitness_goals TEXT[],
+  workout_frequency INTEGER DEFAULT 3,
+  preferred_workout_days TEXT[],
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

@@ -22,7 +22,28 @@ export default function UserProfileDropdown() {
   }, [])
 
   const handleSignOut = async () => {
-    await signOut()
+    console.log('=== SIGN OUT DEBUG START ===')
+    console.log('Sign out button clicked')
+    console.log('Current user:', user?.id, user?.email)
+    console.log('Current profile:', profile?.id)
+    
+    try {
+      console.log('Calling signOut function...')
+      const result = await signOut()
+      console.log('Sign out result:', result)
+      
+      if (result.error) {
+        console.error('Sign out error:', result.error)
+        alert('Sign out failed: ' + result.error.message)
+      } else {
+        console.log('Sign out successful, should redirect to home')
+      }
+    } catch (error) {
+      console.error('Sign out catch error:', error)
+      alert('Unexpected error during sign out: ' + error)
+    }
+    
+    console.log('=== SIGN OUT DEBUG END ===')
     setIsOpen(false)
   }
 

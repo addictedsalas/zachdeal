@@ -17,8 +17,8 @@ export default function PlansPage() {
         <div className="absolute inset-0 bg-bbd-black/60"></div>
         
         {/* Content */}
-        <div className="relative z-10 h-screen flex items-center justify-center px-4">
-          <div className="max-w-7xl mx-auto w-full">
+        <div className="relative z-10 h-screen flex items-center justify-center px-4 overflow-visible">
+          <div className="max-w-7xl mx-auto w-full overflow-visible">
             {/* Header */}
             <div className="text-center mb-12">
               <h1 className="text-6xl md:text-7xl font-bold text-bbd-ivory mb-4 font-bebas">
@@ -30,9 +30,9 @@ export default function PlansPage() {
             </div>
 
             {/* Pricing Cards */}
-            <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-8">
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-8 overflow-visible relative">
               {/* Basic Plan */}
-              <div className="bg-bbd-charcoal/80 backdrop-blur-sm border border-bbd-ivory/20 rounded-xl p-6 hover:border-bbd-orange/50 hover:bg-bbd-charcoal/90 transition-all duration-300 transform hover:scale-105">
+              <div className="bg-bbd-charcoal/80 backdrop-blur-sm border border-bbd-ivory/20 rounded-xl p-6 hover:border-bbd-orange/50 hover:bg-bbd-charcoal/90 transition-all duration-300 transform hover:scale-105 hover:z-20 relative hover:shadow-2xl">
                 <h3 className="text-2xl font-bold text-bbd-ivory mb-2">Basic</h3>
                 <div className="mb-4">
                   <span className="text-4xl font-bold text-bbd-orange">${(PLAN_CONFIGS.BASIC.price / 100).toFixed(0)}</span>
@@ -56,7 +56,7 @@ export default function PlansPage() {
               </div>
 
               {/* Premium Plan */}
-              <div className="bg-bbd-charcoal/80 backdrop-blur-sm border-2 border-bbd-gold rounded-xl p-6 relative transform scale-105 hover:scale-110 transition-all duration-300 hover:bg-bbd-charcoal/90">
+              <div className="bg-bbd-charcoal/80 backdrop-blur-sm border-2 border-bbd-gold rounded-xl p-6 relative transform scale-105 hover:scale-110 transition-all duration-300 hover:bg-bbd-charcoal/90 hover:z-20 relative hover:shadow-2xl">
                 {/* Popular Badge */}
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <span className="bg-gradient-to-r from-bbd-orange to-bbd-gold text-bbd-black px-3 py-1 rounded-full text-xs font-bold">
@@ -87,7 +87,7 @@ export default function PlansPage() {
               </div>
 
               {/* Elite Plan */}
-              <div className="bg-bbd-charcoal/80 backdrop-blur-sm border border-bbd-ivory/20 rounded-xl p-6 hover:border-bbd-orange/50 hover:bg-bbd-charcoal/90 transition-all duration-300 transform hover:scale-105">
+              <div className="bg-bbd-charcoal/80 backdrop-blur-sm border border-bbd-ivory/20 rounded-xl p-6 hover:border-bbd-orange/50 hover:bg-bbd-charcoal/90 transition-all duration-300 transform hover:scale-105 hover:z-20 relative hover:shadow-2xl">
                 <h3 className="text-2xl font-bold text-bbd-ivory mb-2">Elite</h3>
                 <div className="mb-4">
                   <span className="text-4xl font-bold text-bbd-orange">${(PLAN_CONFIGS.ELITE.price / 100).toFixed(0)}</span>

@@ -7,28 +7,85 @@ import { Mail, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 
 export default function AuthPage() {
-  const [mode, setMode] = useState<'login' | 'signup'>('signup')
+  const [mode, setMode] = useState<'login' | 'signup' | 'verify'>('signup')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-
+  const [verificationSent, setVerificationSent] = useState(false)
+  
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { signIn, signUp, signInWithGoogle, user } = useAuth()
-
-  // Get plan info from URL params
+  const { signUp, signIn, signInWithGoogle, user, profile, loading: authLoading } = useAuth()
+  
   const planType = searchParams.get('plan')
   const planName = searchParams.get('planName')
 
-  // Redirect if already authenticated
+  // Check for email confirmation in URL
   useEffect(() => {
-    if (user) {
-      router.push('/dashboard')
+    const hashParams = new URLSearchParams(window.location.hash.substring(1))
+    const accessToken = hashParams.get('access_token')
+    const type = hashParams.get('type')
+    
+    if (type === 'signup' && accessToken) {
+      console.log('Email verification detected, waiting for auth context to be ready...')
+      
+      // Wait for AuthContext to process the session before redirecting
+      const checkAuthReady = () => {
+        if (!authLoading && user) {
+          console.log('Auth context ready, proceeding with post-verification flow')
+          // Email was confirmed, proceed to checkout if plan was selected
+          if (planType) {
+            handleStripeCheckout(planType)
+          } else {
+            router.push('/dashboard')
+          }
+        } else if (!authLoading && !user) {
+          console.log('Auth context ready but no user found after verification')
+          // Something went wrong with verification, stay on auth page
+        } else {
+          // Still loading, check again in a bit
+          setTimeout(checkAuthReady, 500)
+        }
+      }
+      
+      // Start checking after a small delay to allow auth context to process
+      setTimeout(checkAuthReady, 1000)
     }
-  }, [user, router])
+  }, []) // Remove dependencies to prevent re-running
+
+  // Handle redirect after successful authentication
+  useEffect(() => {
+    if (user && !authLoading && !verificationSent) {
+      console.log('User authenticated, checking redirect logic...')
+      
+      // If plan was selected, proceed to checkout
+      if (planType) {
+        console.log('Plan selected, proceeding to checkout:', planType)
+        handleStripeCheckout(planType)
+        return
+      }
+      
+      // Check subscription status and redirect accordingly
+      if (profile) {
+        const hasActiveSubscription = profile.stripe_status === 'active'
+        if (hasActiveSubscription) {
+          console.log('User has active subscription, redirecting to dashboard')
+          router.push('/dashboard')
+        } else {
+          console.log('User has no active subscription, redirecting to plans')
+          // User is logged in but has no active subscription - redirect to plans
+          router.push('/plans')
+        }
+      } else if (!authLoading) {
+        console.log('Profile not loaded but auth not loading, redirecting to plans as fallback')
+        // Profile not loaded yet, redirect to plans as fallback
+        router.push('/plans')
+      }
+    }
+  }, [user, profile, authLoading, planType, verificationSent, router])
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,19 +96,28 @@ export default function AuthPage() {
       let result
       if (mode === 'signup') {
         result = await signUp(email, password, fullName)
+        
+        if (result.error) {
+          throw new Error(result.error.message)
+        }
+        
+        // Show verification message instead of proceeding immediately
+        setVerificationSent(true)
+        setMode('verify')
+        
       } else {
         result = await signIn(email, password)
-      }
+        
+        if (result.error) {
+          throw new Error(result.error.message)
+        }
 
-      if (result.error) {
-        throw new Error(result.error.message)
-      }
-
-      // If plan was selected, trigger Stripe checkout directly
-      if (planType) {
-        await handleStripeCheckout(planType)
-      } else {
-        router.push('/dashboard')
+        // If plan was selected, trigger Stripe checkout directly
+        if (planType) {
+          await handleStripeCheckout(planType)
+        } else {
+          router.push('/dashboard')
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Authentication failed')
@@ -145,23 +211,25 @@ export default function AuthPage() {
           {/* Header */}
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-bbd-ivory font-bebas">
-              {mode === 'signup' ? 'Join Built By Deal' : 'Welcome Back'}
+              {mode === 'signup' ? 'Join Built By Deal' : mode === 'verify' ? 'Verify Your Email' : 'Welcome Back'}
             </h2>
             {planName && (
               <p className="mt-2 text-sm text-bbd-ivory/60">
-                {mode === 'signup' ? 'Create your account to get' : 'Sign in to continue with'} {planName}
+                {mode === 'signup' ? 'Create your account to get' : mode === 'verify' ? 'Verify your email to continue with' : 'Sign in to continue with'} {planName}
               </p>
             )}
             <p className="mt-2 text-sm text-bbd-ivory/80">
               {mode === 'signup' 
                 ? 'Start your fitness transformation today' 
-                : 'Continue your fitness journey'
+                : mode === 'verify' 
+                  ? 'We sent a verification email to your inbox. Please verify your email to continue.' 
+                  : 'Continue your fitness journey'
               }
             </p>
           </div>
 
           {/* Google Sign In - Temporarily disabled until provider is configured */}
-          {false && (
+          {mode !== 'verify' && (
             <button
               type="button"
               onClick={handleGoogleAuth}
@@ -179,7 +247,7 @@ export default function AuthPage() {
           )}
 
           {/* Divider - Only show if Google is enabled */}
-          {false && (
+          {mode !== 'verify' && (
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-bbd-ivory/20"></div>
@@ -191,106 +259,126 @@ export default function AuthPage() {
           )}
 
           {/* Email Form */}
-          <form onSubmit={handleEmailAuth} className="mt-6 space-y-4">
-            {mode === 'signup' && (
-              <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-bbd-ivory/80">
-                  Full Name
-                </label>
-                <input
-                  id="fullName"
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 bg-bbd-black border border-bbd-ivory/20 rounded-lg text-bbd-ivory placeholder-bbd-ivory/40 focus:outline-none focus:ring-2 focus:ring-bbd-orange focus:border-transparent"
-                  placeholder="Enter your full name"
-                />
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-bbd-ivory/80">
-                Email Address
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  id="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full px-3 py-2 pl-10 bg-bbd-black border border-bbd-ivory/20 rounded-lg text-bbd-ivory placeholder-bbd-ivory/40 focus:outline-none focus:ring-2 focus:ring-bbd-orange focus:border-transparent"
-                  placeholder="Enter your email"
-                />
-                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-bbd-ivory/40" />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-bbd-ivory/80">
-                Password
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-3 py-2 pr-10 bg-bbd-black border border-bbd-ivory/20 rounded-lg text-bbd-ivory placeholder-bbd-ivory/40 focus:outline-none focus:ring-2 focus:ring-bbd-orange focus:border-transparent"
-                  placeholder="Enter your password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2.5 text-bbd-ivory/40 hover:text-bbd-ivory/60"
-                >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-              </div>
-            </div>
-
-            {error && (
-              <div className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-lg p-3">
-                {error}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-bbd-black bg-gradient-to-r from-bbd-orange to-bbd-gold hover:from-bbd-gold hover:to-bbd-orange focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bbd-orange transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
-            >
-              {loading ? (
-                <div className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-bbd-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  {mode === 'signup' ? 'Creating Account...' : 'Signing In...'}
+          {mode !== 'verify' && (
+            <form onSubmit={handleEmailAuth} className="mt-6 space-y-4">
+              {mode === 'signup' && (
+                <div>
+                  <label htmlFor="fullName" className="block text-sm font-medium text-bbd-ivory/80">
+                    Full Name
+                  </label>
+                  <input
+                    id="fullName"
+                    type="text"
+                    required
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="mt-1 block w-full px-3 py-2 bg-bbd-black border border-bbd-ivory/20 rounded-lg text-bbd-ivory placeholder-bbd-ivory/40 focus:outline-none focus:ring-2 focus:ring-bbd-orange focus:border-transparent"
+                    placeholder="Enter your full name"
+                  />
                 </div>
-              ) : (
-                mode === 'signup' ? 'Create Account' : 'Sign In'
               )}
-            </button>
-          </form>
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-bbd-ivory/80">
+                  Email Address
+                </label>
+                <div className="mt-1 relative">
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="block w-full px-3 py-2 pl-10 bg-bbd-black border border-bbd-ivory/20 rounded-lg text-bbd-ivory placeholder-bbd-ivory/40 focus:outline-none focus:ring-2 focus:ring-bbd-orange focus:border-transparent"
+                    placeholder="Enter your email"
+                  />
+                  <Mail className="absolute left-3 top-2.5 h-5 w-5 text-bbd-ivory/40" />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-bbd-ivory/80">
+                  Password
+                </label>
+                <div className="mt-1 relative">
+                  <input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="block w-full px-3 py-2 pr-10 bg-bbd-black border border-bbd-ivory/20 rounded-lg text-bbd-ivory placeholder-bbd-ivory/40 focus:outline-none focus:ring-2 focus:ring-bbd-orange focus:border-transparent"
+                    placeholder="Enter your password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-2.5 text-bbd-ivory/40 hover:text-bbd-ivory/60"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
+
+              {error && (
+                <div className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-lg p-3">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-bbd-black bg-gradient-to-r from-bbd-orange to-bbd-gold hover:from-bbd-gold hover:to-bbd-orange focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bbd-orange transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+              >
+                {loading ? (
+                  <div className="flex items-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-bbd-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    {mode === 'signup' ? 'Creating Account...' : 'Signing In...'}
+                  </div>
+                ) : (
+                  mode === 'signup' ? 'Create Account' : 'Sign In'
+                )}
+              </button>
+            </form>
+          )}
+
+          {/* Verification Message */}
+          {mode === 'verify' && (
+            <div className="text-center">
+              <p className="text-lg text-bbd-ivory/90 mb-6">
+                We sent a verification email to your inbox. Please verify your email to continue.
+              </p>
+              <button
+                type="button"
+                onClick={() => setMode('signup')}
+                className="text-sm text-bbd-ivory/60 hover:text-bbd-orange transition-colors"
+              >
+                Resend Verification Email
+              </button>
+            </div>
+          )}
 
           {/* Toggle Mode */}
-          <div className="mt-6 text-center">
-            <button
-              onClick={() => {
-                setMode(mode === 'signup' ? 'login' : 'signup')
-                setError('')
-              }}
-              className="text-sm text-bbd-ivory/60 hover:text-bbd-orange transition-colors"
-            >
-              {mode === 'signup' 
-                ? 'Already have an account? Sign in' 
-                : "Don't have an account? Sign up"
-              }
-            </button>
-          </div>
+          {mode !== 'verify' && (
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => {
+                  setMode(mode === 'signup' ? 'login' : 'signup')
+                  setError('')
+                }}
+                className="text-sm text-bbd-ivory/60 hover:text-bbd-orange transition-colors"
+              >
+                {mode === 'signup' 
+                  ? 'Already have an account? Sign in' 
+                  : "Don't have an account? Sign up"
+                }
+              </button>
+            </div>
+          )}
 
           {/* Back to Plans */}
           <div className="mt-4 text-center">
