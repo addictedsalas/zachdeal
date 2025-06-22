@@ -6,12 +6,17 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import CartDrawer from '@/components/cart/CartDrawer';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
+import UserProfileDropdown from '@/components/auth/UserProfileDropdown';
+import AuthModal from '@/components/auth/AuthModal';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const pathname = usePathname();
   const { itemCount, toggleCart } = useCart();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -65,16 +70,24 @@ export default function Header() {
                 </Link>
               ))}
               
-              {/* Get Started CTA Button */}
-              <Link
-                href="/plans"
-                className="inline-flex items-center px-4 py-2 bg-bbd-orange text-bbd-black font-bold text-sm rounded-md hover:bg-bbd-gold transition-all duration-200 transform hover:scale-105"
-              >
-                GET STARTED
-                <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </Link>
+              {/* Auth Section */}
+              {!loading && (
+                <>
+                  {user ? (
+                    <UserProfileDropdown />
+                  ) : (
+                    <Link
+                      href="/plans"
+                      className="inline-flex items-center px-4 py-2 bg-bbd-orange text-bbd-black font-bold text-sm rounded-md hover:bg-bbd-gold transition-all duration-200 transform hover:scale-105"
+                    >
+                      GET STARTED
+                      <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </Link>
+                  )}
+                </>
+              )}
               
               {/* Cart Button */}
               <button
@@ -105,13 +118,15 @@ export default function Header() {
 
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center space-x-4">
-              {/* Mobile Get Started CTA Button */}
-              <Link
-                href="/plans"
-                className="inline-flex items-center px-3 py-1.5 bg-bbd-orange text-bbd-black font-bold text-xs rounded-md hover:bg-bbd-gold transition-all duration-200"
-              >
-                GET STARTED
-              </Link>
+              {/* Mobile Auth Section */}
+              {!loading && !user && (
+                <Link
+                  href="/plans"
+                  className="inline-flex items-center px-3 py-1.5 bg-bbd-orange text-bbd-black font-bold text-xs rounded-md hover:bg-bbd-gold transition-all duration-200"
+                >
+                  GET STARTED
+                </Link>
+              )}
               
               {/* Mobile Cart Button */}
               <button
@@ -187,11 +202,24 @@ export default function Header() {
                     {link.label}
                   </Link>
                 ))}
+                
+                {/* Mobile User Profile for authenticated users */}
+                {user && (
+                  <div className="border-t border-bbd-orange/20 pt-3 mt-3">
+                    <UserProfileDropdown />
+                  </div>
+                )}
               </div>
             </div>
           )}
         </nav>
       </header>
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+      />
 
       {/* Cart Drawer */}
       <CartDrawer />

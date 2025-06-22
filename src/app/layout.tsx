@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import SocialBar from "@/components/layout/SocialBar";
 import { CartProvider } from "@/contexts/CartContext";
 import { SessionContextProvider } from "@/contexts/SessionContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -45,16 +46,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${bebasNeue.variable}`}>
       <body className="antialiased bg-bbd-charcoal text-bbd-ivory font-body">
-        <SessionContextProvider>
-          <CartProvider>
-            <Header />
-            <main className="min-h-screen">
-              {children}
-            </main>
-            <Footer />
-            <SocialBar />
-          </CartProvider>
-        </SessionContextProvider>
+        <AuthProvider>
+          <SessionContextProvider>
+            <CartProvider>
+              <Header />
+              <main className="min-h-screen">
+                {children}
+              </main>
+              <Footer />
+              <SocialBar />
+            </CartProvider>
+          </SessionContextProvider>
+        </AuthProvider>
       </body>
     </html>
   );

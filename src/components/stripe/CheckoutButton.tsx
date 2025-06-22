@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { stripePromise } from '@/lib/stripeClient';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface CheckoutButtonProps {
   planType: string;
@@ -15,8 +17,20 @@ export default function CheckoutButton({
   className = ""
 }: CheckoutButtonProps) {
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  const router = useRouter();
 
   const handleCheckout = async () => {
+    // If user is not authenticated, redirect to auth page with plan info
+    if (!user) {
+      const params = new URLSearchParams({
+        plan: planType,
+        planName: planName
+      });
+      router.push(`/auth?${params.toString()}`);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -89,8 +103,13 @@ export default function CheckoutButton({
         ) : (
           <>
             <span className="text-lg font-bold">
-              Get {planName}
+              {user ? `Get ${planName}` : `Sign Up for ${planName}`}
             </span>
+            {!user && (
+              <span className="text-sm opacity-80 mt-1">
+                Create account & subscribe
+              </span>
+            )}
           </>
         )}
       </span>
