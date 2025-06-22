@@ -27,7 +27,7 @@ export default function Header() {
     { href: '/programs', label: 'Programs' },
     { href: '/supplements', label: 'Supplements' },
     { href: '/about', label: 'About' },
-    { href: '/blog', label: 'Blog' },
+    { href: '/contact', label: 'Contact' },
   ];
 
   return (
@@ -65,6 +65,17 @@ export default function Header() {
                 </Link>
               ))}
               
+              {/* Get Started CTA Button */}
+              <Link
+                href="/plans"
+                className="inline-flex items-center px-4 py-2 bg-bbd-orange text-bbd-black font-bold text-sm rounded-md hover:bg-bbd-gold transition-all duration-200 transform hover:scale-105"
+              >
+                GET STARTED
+                <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </Link>
+              
               {/* Cart Button */}
               <button
                 onClick={toggleCart}
@@ -94,6 +105,14 @@ export default function Header() {
 
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center space-x-4">
+              {/* Mobile Get Started CTA Button */}
+              <Link
+                href="/plans"
+                className="inline-flex items-center px-3 py-1.5 bg-bbd-orange text-bbd-black font-bold text-xs rounded-md hover:bg-bbd-gold transition-all duration-200"
+              >
+                GET STARTED
+              </Link>
+              
               {/* Mobile Cart Button */}
               <button
                 onClick={toggleCart}
