@@ -6,8 +6,6 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import CartDrawer from '@/components/cart/CartDrawer';
 import { useCart } from '@/contexts/CartContext';
-import { useAuth } from '@/contexts/AuthContext';
-import UserProfileDropdown from '@/components/auth/UserProfileDropdown';
 import AuthModal from '@/components/auth/AuthModal';
 
 export default function Header() {
@@ -16,7 +14,6 @@ export default function Header() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const pathname = usePathname();
   const { itemCount, toggleCart } = useCart();
-  const { user, loading } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -88,28 +85,6 @@ export default function Header() {
                   </span>
                 )}
               </button>
-
-              {/* Authentication Section - Always show something */}
-              {user ? (
-                /* User is logged in - show profile dropdown */
-                <UserProfileDropdown />
-              ) : (
-                /* User is not logged in - show login and get started buttons */
-                <div className="flex items-center space-x-3">
-                  <button
-                    onClick={() => setShowAuthModal(true)}
-                    className="text-bbd-ivory hover:text-bbd-orange transition-colors font-medium"
-                  >
-                    Login
-                  </button>
-                  <Link
-                    href="/plans"
-                    className="bg-gradient-to-r from-bbd-orange to-bbd-gold hover:from-bbd-gold hover:to-bbd-orange text-bbd-black font-bold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
-                  >
-                    Get Started
-                  </Link>
-                </div>
-              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -163,34 +138,6 @@ export default function Header() {
                     {link.label}
                   </Link>
                 ))}
-                
-                {/* Mobile Authentication Section */}
-                <div className="border-t border-bbd-orange/20 pt-3 mt-3">
-                  {user ? (
-                    /* User is logged in - show profile options */
-                    <UserProfileDropdown />
-                  ) : (
-                    /* User is not logged in - show login and get started buttons */
-                    <div className="space-y-2">
-                      <button
-                        onClick={() => {
-                          setShowAuthModal(true);
-                          setIsMenuOpen(false);
-                        }}
-                        className="block w-full text-left py-2 text-bbd-ivory hover:text-bbd-orange transition-colors font-medium"
-                      >
-                        Login
-                      </button>
-                      <Link
-                        href="/plans"
-                        onClick={() => setIsMenuOpen(false)}
-                        className="block w-full text-center bg-gradient-to-r from-bbd-orange to-bbd-gold hover:from-bbd-gold hover:to-bbd-orange text-bbd-black font-bold py-2 px-4 rounded-lg transition-all duration-300"
-                      >
-                        Get Started
-                      </Link>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
           )}

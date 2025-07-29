@@ -93,7 +93,7 @@ export default function SupplementsSection() {
                 >
                   <div className="bg-bbd-charcoal/50 rounded-lg overflow-hidden border border-gray-800 hover:border-bbd-orange transition-all duration-300">
                     {/* Product Image */}
-                    <Link href={`/products/${product.handle}`} className="block relative h-64 overflow-hidden">
+                    <Link href={`/supplements/${product.handle}`} className="block relative h-64 overflow-hidden">
                       {productImage ? (
                         <Image
                           src={productImage.url}
@@ -129,7 +129,7 @@ export default function SupplementsSection() {
                           {formatPrice(price.amount, price.currencyCode)}
                         </span>
                         <Link
-                          href={`/products/${product.handle}`}
+                          href={`/supplements/${product.handle}`}
                           className="inline-flex items-center text-bbd-ivory hover:text-bbd-orange transition-colors"
                         >
                           View Details

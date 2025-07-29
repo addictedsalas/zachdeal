@@ -14,9 +14,9 @@ export default function SupplementCard({ product, featured = false }: Supplement
   // Extract supplement type from title or description
   const getSupplementType = (title: string, description: string) => {
     const text = (title + ' ' + description).toLowerCase();
+    if (text.includes('creatine')) return 'Creatine';
     if (text.includes('protein') || text.includes('whey')) return 'Protein';
     if (text.includes('pre-workout') || text.includes('energy')) return 'Pre-Workout';
-    if (text.includes('creatine')) return 'Creatine';
     if (text.includes('vitamin') || text.includes('multivitamin')) return 'Vitamins';
     if (text.includes('recovery') || text.includes('bcaa')) return 'Recovery';
     if (text.includes('fat burn') || text.includes('thermogenic')) return 'Fat Burner';
@@ -56,7 +56,7 @@ export default function SupplementCard({ product, featured = false }: Supplement
       </div>
 
       {/* Product Image */}
-      <Link href={`/checkout/${product.handle}`} className="block relative h-64 overflow-hidden">
+      <Link href={`/supplements/${product.handle}`} className="block relative h-64 overflow-hidden">
         {productImage ? (
           <Image
             src={productImage.url}
@@ -155,7 +155,7 @@ export default function SupplementCard({ product, featured = false }: Supplement
         {/* Get Supplement Button */}
         <div className="flex items-center justify-between">
           <Link
-            href={`/checkout/${product.handle}`}
+            href={`/supplements/${product.handle}`}
             className="inline-flex items-center px-4 py-2 bg-bbd-orange text-bbd-black font-bold text-sm rounded-md hover:bg-bbd-gold transition-all duration-200 transform hover:scale-105"
           >
             GET SUPPLEMENT

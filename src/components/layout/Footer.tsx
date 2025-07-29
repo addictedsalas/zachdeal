@@ -7,7 +7,6 @@ export default function Footer() {
     shop: [
       { href: '/programs', label: 'Training Programs' },
       { href: '/supplements', label: 'Supplements' },
-      { href: '/bundles', label: 'Bundles & Deals' },
     ],
     support: [
       { href: '/shipping', label: 'Shipping Info' },

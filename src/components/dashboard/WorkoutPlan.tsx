@@ -11,9 +11,7 @@ import {
   Circle, 
   Dumbbell, 
   Target, 
-  Clock,
-  Trophy,
-  Settings
+  Settings,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient'
 
@@ -161,8 +159,6 @@ export default function WorkoutPlan() {
   const { user, profile } = useAuth()
   const [currentWeek, setCurrentWeek] = useState<WorkoutDay[]>([])
   const [completedWorkouts, setCompletedWorkouts] = useState<Set<string>>(new Set())
-  const [showCongrats, setShowCongrats] = useState(false)
-  const [selectedWorkout, setSelectedWorkout] = useState<WorkoutDay | null>(null)
 
   // Get current week dates
   const getCurrentWeek = () => {
@@ -233,44 +229,6 @@ export default function WorkoutPlan() {
     }
   }
 
-  const markWorkoutComplete = async (workoutDay: WorkoutDay) => {
-    if (!user) return
-
-    try {
-      // Create workout instance in database
-      const { data, error } = await supabase
-        .from('workout_instances')
-        .insert({
-          user_id: user.id,
-          template_id: null, // We'll add template support later
-          status: 'completed',
-          scheduled_date: workoutDay.date,
-          completed_at: new Date().toISOString(),
-          workout_data: { exercises: workoutDay.exercises }
-        })
-        .select()
-        .single()
-
-      if (!error) {
-        setCompletedWorkouts(prev => new Set([...prev, workoutDay.date]))
-        setShowCongrats(true)
-        setSelectedWorkout(workoutDay)
-        
-        // Hide congratulations modal after 3 seconds
-        setTimeout(() => {
-          setShowCongrats(false)
-          setSelectedWorkout(null)
-        }, 3000)
-      } else {
-        console.error('Failed to mark workout complete:', error)
-        alert('Failed to mark workout as complete. Please try again.')
-      }
-    } catch (error) {
-      console.error('Error marking workout complete:', error)
-      alert('An error occurred. Please try again.')
-    }
-  }
-
   const getCurrentPlan = () => {
     if (!profile?.selected_workout_plan) return null
     return sampleWorkoutPlans[profile.selected_workout_plan as keyof typeof sampleWorkoutPlans]
@@ -333,7 +291,7 @@ export default function WorkoutPlan() {
         <CardHeader>
           <CardTitle className="text-[#EFEAE0] flex items-center gap-2">
             <Calendar className="w-5 h-5 text-[#EE7F0E]" />
-            This Week's Workouts
+            This Week&apos;s Workouts
           </CardTitle>
           <CardDescription className="text-[#EFEAE0]/70">
             Check off workouts as you complete them
@@ -375,7 +333,6 @@ export default function WorkoutPlan() {
                       </div>
                       {hasWorkout && (
                         <button
-                          onClick={() => !isCompleted && markWorkoutComplete(day)}
                           disabled={isCompleted}
                           className={`transition-all ${
                             isCompleted 
@@ -420,26 +377,6 @@ export default function WorkoutPlan() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Congratulations Modal */}
-      {showCongrats && selectedWorkout && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="bg-[#000000] border-[#EE7F0E] max-w-md mx-4">
-            <CardContent className="text-center py-8">
-              <Trophy className="w-16 h-16 text-[#FFC842] mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-[#EFEAE0] mb-2">
-                Workout Complete! 🎉
-              </h3>
-              <p className="text-[#EFEAE0]/70 mb-4">
-                Great job finishing your {selectedWorkout.day} workout!
-              </p>
-              <div className="text-sm text-[#EFEAE0]/60">
-                Keep up the momentum and stay consistent!
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
     </div>
   )
 }

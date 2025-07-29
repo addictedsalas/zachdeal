@@ -199,6 +199,14 @@ const CREATE_CART_MUTATION = `
       cart {
         id
         checkoutUrl
+        totalQuantity
+        lines(first: 100) {
+          edges {
+            node {
+              id
+            }
+          }
+        }
       }
     }
   }
@@ -210,6 +218,7 @@ const ADD_TO_CART_MUTATION = `
       cart {
         id
         checkoutUrl
+        totalQuantity
         lines(first: 100) {
           edges {
             node {
@@ -224,7 +233,9 @@ const ADD_TO_CART_MUTATION = `
                     currencyCode
                   }
                   product {
+                    id
                     title
+                    handle
                     featuredImage {
                       url
                       altText
@@ -240,7 +251,15 @@ const ADD_TO_CART_MUTATION = `
             amount
             currencyCode
           }
+          subtotalAmount {
+            amount
+            currencyCode
+          }
         }
+      }
+      userErrors {
+        field
+        message
       }
     }
   }
@@ -312,9 +331,33 @@ const UPDATE_LINE_ITEM_MUTATION = `
               merchandise {
                 ... on ProductVariant {
                   id
+                  title
+                  priceV2 {
+                    amount
+                    currencyCode
+                  }
+                  product {
+                    id
+                    title
+                    handle
+                    featuredImage {
+                      url
+                      altText
+                    }
+                  }
                 }
               }
             }
+          }
+        }
+        cost {
+          totalAmount {
+            amount
+            currencyCode
+          }
+          subtotalAmount {
+            amount
+            currencyCode
           }
         }
       }
@@ -337,9 +380,33 @@ const REMOVE_LINE_ITEM_MUTATION = `
               merchandise {
                 ... on ProductVariant {
                   id
+                  title
+                  priceV2 {
+                    amount
+                    currencyCode
+                  }
+                  product {
+                    id
+                    title
+                    handle
+                    featuredImage {
+                      url
+                      altText
+                    }
+                  }
                 }
               }
             }
+          }
+        }
+        cost {
+          totalAmount {
+            amount
+            currencyCode
+          }
+          subtotalAmount {
+            amount
+            currencyCode
           }
         }
       }
@@ -421,10 +488,8 @@ export async function createCart() {
       throw new Error('Failed to create cart');
     }
 
-    return {
-      id: data.cartCreate.cart.id,
-      checkoutUrl: data.cartCreate.cart.checkoutUrl,
-    };
+    // Return the full cart object instead of just id and checkoutUrl
+    return data.cartCreate.cart;
   } catch (error) {
     console.error('Error creating cart:', error);
     throw error;
@@ -440,6 +505,26 @@ export async function addLinesToCart(cartId: string, lines: Array<{ merchandiseI
     if (errors) {
       console.error('GraphQL errors:', errors);
       throw new Error('Failed to add items to cart');
+    }
+
+    // Check for user errors
+    if (data.cartLinesAdd.userErrors && data.cartLinesAdd.userErrors.length > 0) {
+      const errorMessage = data.cartLinesAdd.userErrors[0].message;
+      console.error('Shopify user error:', errorMessage);
+      
+      // Provide more helpful error messages
+      if (errorMessage.includes('not found')) {
+        throw new Error('This product is not available. It may not be published to the online store.');
+      } else if (errorMessage.includes('stock') || errorMessage.includes('available')) {
+        throw new Error('This product is out of stock.');
+      } else {
+        throw new Error(errorMessage);
+      }
+    }
+
+    // Check if items were actually added
+    if (data.cartLinesAdd.cart.totalQuantity === 0) {
+      console.warn('No items were added to cart. Product may not be available on this sales channel.');
     }
 
     return data.cartLinesAdd.cart;
@@ -516,4 +601,26 @@ export function formatPrice(amount: string, currencyCode: string = 'USD'): strin
     style: 'currency',
     currency: currencyCode,
   }).format(numericPrice);
+}
+
+// Utility function to determine product type from collections
+export async function getProductType(handle: string): Promise<'supplement' | 'program' | null> {
+  try {
+    // Check if product is in supplements collection
+    const supplementsCollection = await getCollectionProducts('supplements', 100);
+    if (supplementsCollection.some(product => product.handle === handle)) {
+      return 'supplement';
+    }
+
+    // Check if product is in programs collection
+    const programsCollection = await getCollectionProducts('programs', 100);
+    if (programsCollection.some(product => product.handle === handle)) {
+      return 'program';
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error determining product type:', error);
+    return null;
+  }
 }

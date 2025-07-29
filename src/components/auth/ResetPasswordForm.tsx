@@ -9,7 +9,7 @@ interface ResetPasswordFormProps {
   onSwitchToLogin: () => void
 }
 
-export default function ResetPasswordForm({ onSuccess, onSwitchToLogin }: ResetPasswordFormProps) {
+export default function ResetPasswordForm({ onSwitchToLogin }: ResetPasswordFormProps) {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -42,7 +42,7 @@ export default function ResetPasswordForm({ onSuccess, onSwitchToLogin }: ResetP
           </div>
           <h3 className="text-green-400 font-medium mb-2">Reset Link Sent</h3>
           <p className="text-[#EFEAE0]/80 text-sm">
-            We've sent a password reset link to <strong>{email}</strong>. 
+            We&apos;ve sent a password reset link to <strong>{email}</strong>. 
             Check your email and follow the instructions to reset your password.
           </p>
         </div>
@@ -61,7 +61,7 @@ export default function ResetPasswordForm({ onSuccess, onSwitchToLogin }: ResetP
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="text-center mb-6">
         <p className="text-[#EFEAE0]/80 text-sm">
-          Enter your email address and we'll send you a link to reset your password.
+          Enter your email address and we&apos;ll send you a link to reset your password.
         </p>
       </div>
 

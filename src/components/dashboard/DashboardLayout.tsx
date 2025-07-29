@@ -3,12 +3,7 @@
 import { ReactNode, useState, useRef, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { 
-  Activity, 
-  Apple, 
-  BarChart3, 
-  Dumbbell, 
   Home, 
-  MessageCircle, 
   Settings, 
   User,
   LogOut,

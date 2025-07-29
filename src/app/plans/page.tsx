@@ -25,7 +25,7 @@ export default function PlansPage() {
                 Choose Your Plan
               </h1>
               <p className="text-xl md:text-2xl text-bbd-ivory/90 max-w-3xl mx-auto leading-relaxed">
-                Transform your fitness journey with Built By Deal's proven programs.
+                Transform your fitness journey with Built By Deal&apos;s proven programs.
               </p>
             </div>
 

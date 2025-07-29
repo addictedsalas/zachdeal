@@ -4,13 +4,23 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabaseClient';
 
+interface Profile {
+  id: string;
+  email: string;
+  full_name: string;
+  stripe_status: string;
+  stripe_customer_id: string | null;
+  created_at: string;
+  updated_at: string;
+  }
+
 interface SessionContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
   signIn: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
-  profile: any | null;
+  profile: Profile | null;
   refreshProfile: () => Promise<void>;
 }
 
@@ -20,7 +30,7 @@ export function SessionContextProvider({ children }: { children: React.ReactNode
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<any | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   const refreshProfile = async () => {
     if (!user) {
@@ -40,7 +50,7 @@ export function SessionContextProvider({ children }: { children: React.ReactNode
         return;
       }
 
-      setProfile(data);
+      setProfile(data as Profile);
     } catch (error) {
       console.error('Error refreshing profile:', error);
     }
@@ -67,14 +77,14 @@ export function SessionContextProvider({ children }: { children: React.ReactNode
         // Check if user has completed onboarding or has active subscription
         const { data: profile } = await supabase
           .from('profiles')
-          .select('goals, equipment, stripe_status')
+          .select('*')
           .eq('id', session.user.id)
           .single();
 
         // If user has active subscription, redirect to dashboard
         if (profile?.stripe_status === 'active') {
           window.location.href = '/dashboard';
-        } else if (!profile?.goals || !profile?.equipment) {
+        } else if (!profile?.fitness_objectives) {
           // If user doesn't have goals/equipment set and no subscription, redirect to plans
           window.location.href = '/plans';
         }

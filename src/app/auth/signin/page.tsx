@@ -19,8 +19,8 @@ export default function SignInPage() {
     try {
       await signIn(email);
       setMessage('Check your email for a magic link to sign in!');
-    } catch (error: any) {
-      setMessage(error.message || 'An error occurred');
+    } catch (error: unknown) {
+      setMessage(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -91,7 +91,7 @@ export default function SignInPage() {
 
           <div className="mt-8 text-center">
             <p className="text-bbd-ivory/60 text-sm">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <button
                 onClick={() => router.push('/plans')}
                 className="text-bbd-orange hover:text-bbd-gold transition-colors duration-200"

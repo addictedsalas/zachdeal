@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Testimonials() {
   const testimonials = [
@@ -101,12 +102,12 @@ export default function Testimonials() {
           <p className="text-xl text-gray-300 mb-6">
             Ready to write your own success story?
           </p>
-          <a
+          <Link
             href="/programs"
             className="inline-block px-8 py-4 bg-bbd-orange text-bbd-ivory font-bold text-lg rounded-md hover:bg-bbd-orange/90 transition-all duration-200 transform hover:scale-105"
           >
             START YOUR TRANSFORMATION →
-          </a>
+          </Link>
         </div>
       </div>
     </section>

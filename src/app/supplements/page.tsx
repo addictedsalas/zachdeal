@@ -37,7 +37,6 @@ export default async function SupplementsPage() {
               <SupplementCard 
                 key={product.id} 
                 product={product} 
-                layout="standard"
               />
             ))}
           </div>

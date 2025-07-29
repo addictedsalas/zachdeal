@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { CheckCircle, Target, Calendar, Dumbbell, Clock, User, Scale, AlertTriangle } from 'lucide-react'
+import { CheckCircle, Target, Dumbbell, Clock, User, AlertTriangle } from 'lucide-react'
 
 interface OnboardingData {
   age: number | null
@@ -368,7 +368,7 @@ export default function OnboardingPage() {
                 <div className="text-center mb-6">
                   <Target className="w-12 h-12 text-[#EE7F0E] mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-[#EFEAE0] mb-2">What are your fitness goals?</h3>
-                  <p className="text-[#EFEAE0]/70">Select all that apply - we'll prioritize these in your plan</p>
+                  <p className="text-[#EFEAE0]/70">Select all that apply - we&apos;ll prioritize these in your plan</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

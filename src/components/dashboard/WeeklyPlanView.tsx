@@ -5,32 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useWorkout } from '@/contexts/WorkoutContext'
-import { ChevronLeft, ChevronRight, Clock, Target, Dumbbell, Utensils, Coffee, Sun, Moon } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Clock, Dumbbell, Utensils, Coffee, Sun, Moon } from 'lucide-react'
 
-interface WorkoutCard {
-  id: string
-  day: string
-  date: string
-  workout: {
-    name: string
-    duration: string
-    exercises: string[]
-    difficulty: 'Beginner' | 'Intermediate' | 'Advanced'
-    muscleGroups: string[]
-    completed: boolean
-  }
-}
-
-interface MealPlan {
-  breakfast: { name: string; calories: number; protein: string }
-  lunch: { name: string; calories: number; protein: string }
-  dinner: { name: string; calories: number; protein: string }
-  snacks: { name: string; calories: number }[]
-}
 
 interface WeeklyPlanViewProps {
   selectedPlan: string
-  userProfile: any
+  userProfile: {
+    workout_frequency: number
+    fitness_objectives: string[]
+  }
 }
 
 export default function WeeklyPlanView({ selectedPlan, userProfile }: WeeklyPlanViewProps) {
@@ -127,7 +110,7 @@ export default function WeeklyPlanView({ selectedPlan, userProfile }: WeeklyPlan
       {/* Workout Cards Carousel */}
       <div className="space-y-6">
         <div className="flex items-center justify-center mb-6">
-          <h3 className="text-2xl font-bold text-[#EFEAE0] font-['Bebas_Neue']">THIS WEEK'S WORKOUTS</h3>
+          <h3 className="text-2xl font-bold text-[#EFEAE0] font-['Bebas_Neue']">THIS WEEK&apos;S WORKOUTS</h3>
         </div>
 
         <div className="relative">
@@ -235,7 +218,7 @@ export default function WeeklyPlanView({ selectedPlan, userProfile }: WeeklyPlan
 
       {/* Today's Nutrition */}
       <div className="space-y-6">
-        <h3 className="text-2xl font-bold text-[#EFEAE0] font-['Bebas_Neue'] mb-6">TODAY'S NUTRITION</h3>
+        <h3 className="text-2xl font-bold text-[#EFEAE0] font-['Bebas_Neue'] mb-6">Today&apos;s Nutrition</h3>
         
         {/* Main Meals */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

@@ -117,6 +117,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const newCart = await createCart();
+      setCart(newCart); // Set the full cart object
       setCartId(newCart.id);
       localStorage.setItem('cartId', newCart.id);
       return newCart.id;
@@ -139,7 +140,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [cartId, ensureCart]);
+  }, [cartId]);
 
   const updateQuantity = useCallback(async (lineId: string, quantity: number) => {
     if (!cartId) return;

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface Message {
   id: string
@@ -12,7 +12,10 @@ interface Message {
 }
 
 interface VirtualAssistantProps {
-  userProfile?: any
+  userProfile?: {
+    full_name: string
+    selected_workout_plan: string
+  }
 }
 
 export default function VirtualAssistant({ userProfile }: VirtualAssistantProps) {

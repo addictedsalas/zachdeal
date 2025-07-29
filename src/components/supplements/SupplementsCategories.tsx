@@ -132,7 +132,7 @@ export default function SupplementsCategories({ supplementsByCategory }: Supplem
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {products.map((product) => (
-                  <SupplementCard key={product.id} product={product} layout="standard" />
+                  <SupplementCard key={product.id} product={product} />
                 ))}
               </div>
             </div>

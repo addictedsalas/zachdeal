@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useWorkout } from '@/contexts/WorkoutContext'
@@ -13,11 +12,16 @@ import {
 } from 'lucide-react'
 
 interface WorkoutActionItemProps {
-  userProfile?: any
+  userProfile?: {
+    id: string
+    name: string
+    email: string
+    selected_workout_plan: string
+  }
   onStartWorkout?: () => void
 }
 
-export default function WorkoutActionItem({ userProfile, onStartWorkout }: WorkoutActionItemProps) {
+export default function WorkoutActionItem({ onStartWorkout }: WorkoutActionItemProps) {
   const { todaysWorkout, getTodaysWorkoutStatus, toggleWorkoutCompletion } = useWorkout()
   
   const isWorkoutCompleted = getTodaysWorkoutStatus()
@@ -42,7 +46,7 @@ export default function WorkoutActionItem({ userProfile, onStartWorkout }: Worko
               </div>
               <div>
                 <h3 className="text-[#000000] font-bold text-lg">Workout Complete!</h3>
-                <p className="text-[#000000]/70 text-sm">Great job finishing today's workout</p>
+                <p className="text-[#000000]/70 text-sm">Great job finishing today&apos;s workout</p>
               </div>
             </div>
             <Button 
@@ -89,7 +93,7 @@ export default function WorkoutActionItem({ userProfile, onStartWorkout }: Worko
             </div>
             <div>
               <h2 className="text-xl font-bold text-[#000000] font-['Bebas_Neue'] mb-1">
-                TODAY'S WORKOUT
+                TODAY&apos;S WORKOUT
               </h2>
               <p className="text-[#000000]/80 font-semibold mb-2">{todaysWorkout.workout.name}</p>
               
@@ -115,7 +119,7 @@ export default function WorkoutActionItem({ userProfile, onStartWorkout }: Worko
           <div className="flex flex-col lg:flex-row lg:items-center space-y-3 lg:space-y-0 lg:space-x-6">
             {/* Schedule Info */}
             <div className="text-center lg:text-right">
-              <div className="text-sm text-[#000000]/70 mb-1">Today's Focus</div>
+              <div className="text-sm text-[#000000]/70 mb-1">Today&apos;s Focus</div>
               <div className="text-lg font-bold text-[#000000] font-['Bebas_Neue']">
                 {todaysWorkout.workout.muscleGroups.join(' + ')}
               </div>
@@ -136,7 +140,7 @@ export default function WorkoutActionItem({ userProfile, onStartWorkout }: Worko
         {/* Progress Indicator */}
         <div className="mt-4 pt-4 border-t border-[#000000]/20">
           <div className="flex items-center justify-between text-sm text-[#000000]/70 mb-2">
-            <span>Today's Progress</span>
+            <span>Today&apos;s Progress</span>
             <span>Ready to start</span>
           </div>
           <div className="w-full bg-[#000000]/20 rounded-full h-2">

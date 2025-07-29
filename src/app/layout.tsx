@@ -1,9 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, Bebas_Neue } from 'next/font/google';
 import "./globals.css";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import SocialBar from "@/components/layout/SocialBar";
 import { CartProvider } from "@/contexts/CartContext";
 import { SessionContextProvider } from "@/contexts/SessionContext";
 import { AuthProvider } from "@/contexts/AuthContext";

@@ -9,7 +9,7 @@ interface SignUpFormProps {
   onSwitchToLogin: () => void
 }
 
-export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps) {
+export default function SignUpForm({ onSwitchToLogin }: SignUpFormProps) {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -67,7 +67,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
         <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
           <h3 className="text-green-400 font-medium mb-2">Check Your Email</h3>
           <p className="text-[#EFEAE0]/80 text-sm">
-            We've sent you a confirmation link at <strong>{formData.email}</strong>. 
+            We&apos;ve sent you a confirmation link at <strong>{formData.email}</strong>. 
             Click the link to verify your account and complete your registration.
           </p>
         </div>

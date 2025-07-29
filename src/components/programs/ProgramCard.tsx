@@ -57,7 +57,7 @@ export default function ProgramCard({ product, featured = false, priority = fals
       </div>
 
       {/* Product Image */}
-      <Link href={`/checkout/${product.handle}`} className="block relative h-64 overflow-hidden">
+      <Link href={`/programs/${product.handle}`} className="block relative h-64 overflow-hidden">
         {productImage ? (
           <Image
             src={productImage.url}
@@ -125,7 +125,7 @@ export default function ProgramCard({ product, featured = false, priority = fals
           </div>
           
           <Link
-            href={`/checkout/${product.handle}`}
+            href={`/programs/${product.handle}`}
             className="inline-flex items-center px-4 py-2 bg-bbd-orange text-bbd-black font-bold text-sm rounded-md hover:bg-bbd-gold transition-all duration-200 transform hover:scale-105"
           >
             GET PROGRAM

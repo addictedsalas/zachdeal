@@ -11,7 +11,6 @@ import {
   Droplets, 
   Flame, 
   TrendingUp, 
-  Clock, 
   Target, 
   Dumbbell, 
   Coffee,
@@ -19,11 +18,15 @@ import {
   Moon,
   CheckCircle,
   Calendar,
-  Play
 } from 'lucide-react'
 
-interface TodayOverviewProps {
-  userProfile: any
+export interface TodayOverviewProps {
+  userProfile: {
+    id: string
+    name: string
+    email: string
+    selected_workout_plan: string
+  }
 }
 
 export default function TodayOverview({ userProfile }: TodayOverviewProps) {
@@ -82,7 +85,7 @@ export default function TodayOverview({ userProfile }: TodayOverviewProps) {
       <div className="bg-gradient-to-r from-[#1A1B18] to-[#000000] rounded-xl p-6 lg:p-8 border border-[#EFEAE0]/10">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-[#EFEAE0] font-['Bebas_Neue'] mb-2">TODAY'S OVERVIEW</h1>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[#EFEAE0] font-['Bebas_Neue'] mb-2">TODAY&apos;S OVERVIEW</h1>
             <p className="text-[#EFEAE0]/70 text-base lg:text-lg">{todayFormatted}</p>
           </div>
           <div className="text-center lg:text-right">
@@ -199,7 +202,7 @@ export default function TodayOverview({ userProfile }: TodayOverviewProps) {
         {/* Today's Meals */}
         <Card className="bg-[#1A1B18]/50 border-[#EFEAE0]/10">
           <CardHeader className="pb-4">
-            <CardTitle className="text-[#EFEAE0] text-lg lg:text-xl font-['Bebas_Neue']">TODAY'S MEALS</CardTitle>
+            <CardTitle className="text-[#EFEAE0] text-lg lg:text-xl font-['Bebas_Neue']">TODAY&apos;S MEALS</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Breakfast */}
@@ -328,7 +331,7 @@ export default function TodayOverview({ userProfile }: TodayOverviewProps) {
 
             {/* Daily Tip */}
             <div className="mt-6 p-4 bg-gradient-to-r from-[#EE7F0E]/10 to-[#FFC842]/10 border border-[#EE7F0E]/20 rounded-lg">
-              <h4 className="text-[#EE7F0E] font-semibold text-sm mb-2">💡 Today's Tip</h4>
+              <h4 className="text-[#EE7F0E] font-semibold text-sm mb-2">💡 Today&apos;s Tip</h4>
               <p className="text-[#EFEAE0]/80 text-xs lg:text-sm">
                 Stay hydrated! Aim to drink water consistently throughout the day rather than waiting until you feel thirsty.
               </p>

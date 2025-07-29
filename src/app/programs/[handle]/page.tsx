@@ -1,18 +1,22 @@
 "use client";
 
 import { useState, useEffect, use } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { getProductByHandle, formatPrice, getProductType, type Product, type ProductVariant } from '@/lib/shopify';
-import { notFound, redirect } from 'next/navigation';
+import { getProductByHandle, formatPrice, type Product, ProductVariant } from '@/lib/shopify';
+import { notFound } from 'next/navigation';
+import ProductBreadcrumb from '@/components/products/ProductBreadcrumb';
+import ProductImage from '@/components/products/ProductImage';
+import ProductPrice from '@/components/products/ProductPrice';
+import ProductQuantitySelector from '@/components/products/ProductQuantitySelector';
+import ProductTrustIndicators from '@/components/products/ProductTrustIndicators';
+import AddToCartButton from '@/components/products/AddToCartButton';
 
-interface ProductPageProps {
+interface ProgramPageProps {
   params: Promise<{
     handle: string;
   }>;
 }
 
-export default function ProductPage({ params }: ProductPageProps) {
+export default function ProgramPage({ params }: ProgramPageProps) {
   const resolvedParams = use(params);
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
@@ -22,14 +26,6 @@ export default function ProductPage({ params }: ProductPageProps) {
   useEffect(() => {
     async function fetchProduct() {
       try {
-        // First check product type and redirect if necessary
-        const productType = await getProductType(resolvedParams.handle);
-        if (productType === 'supplement') {
-          redirect(`/supplements/${resolvedParams.handle}`);
-        } else if (productType === 'program') {
-          redirect(`/programs/${resolvedParams.handle}`);
-        }
-
         const productData = await getProductByHandle(resolvedParams.handle);
         if (!productData) {
           notFound();
@@ -47,8 +43,7 @@ export default function ProductPage({ params }: ProductPageProps) {
     fetchProduct();
   }, [resolvedParams.handle]);
 
-  // Note: This page redirects to specific product pages based on type
-  // Add to cart functionality is handled in those pages
+  // Removed handleAddToCart - now using AddToCartButton component
 
   if (loading) {
     return (
@@ -93,46 +88,13 @@ export default function ProductPage({ params }: ProductPageProps) {
   return (
     <div className="min-h-screen bg-bbd-black pt-24">
       {/* Navigation Breadcrumb */}
-      <div className="bg-bbd-charcoal/20 py-4">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center space-x-2 text-sm">
-            <Link href="/" className="text-bbd-ivory/60 hover:text-bbd-orange transition-colors">
-              Home
-            </Link>
-            <span className="text-bbd-ivory/40">/</span>
-            <Link href="/programs" className="text-bbd-ivory/60 hover:text-bbd-orange transition-colors">
-              Programs
-            </Link>
-            <span className="text-bbd-ivory/40">/</span>
-            <span className="text-bbd-ivory">{product.title}</span>
-          </nav>
-        </div>
-      </div>
+      <ProductBreadcrumb productTitle={product.title} productType="program" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Image */}
           <div className="relative">
-            <div className="aspect-square relative rounded-2xl overflow-hidden bg-bbd-charcoal/20">
-              {productImage ? (
-                <Image
-                  src={productImage.url}
-                  alt={productImage.altText || product.title}
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="text-center">
-                    <svg className="w-24 h-24 text-bbd-ivory/20 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <p className="text-bbd-ivory/40">Program Image</p>
-                  </div>
-                </div>
-              )}
-            </div>
+            <ProductImage image={productImage} title={product.title} placeholder="program" />
 
             {/* Program Features */}
             <div className="mt-8 grid grid-cols-2 gap-4">
@@ -164,21 +126,7 @@ export default function ProductPage({ params }: ProductPageProps) {
               <h1 className="font-bebas text-4xl lg:text-5xl text-bbd-ivory mb-4 leading-tight">
                 {product.title}
               </h1>
-              <div className="flex items-center space-x-4 mb-6">
-                <span className="text-3xl font-bold text-bbd-orange">
-                  {formatPrice(price.amount, price.currencyCode)}
-                </span>
-                <div className="flex items-center space-x-1">
-                  <div className="flex text-bbd-gold">
-                    {[...Array(5)].map((_, i) => (
-                      <svg key={i} className="w-5 h-5 fill-current" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
-                  </div>
-                  <span className="text-sm text-bbd-ivory/60">(4.9)</span>
-                </div>
-              </div>
+              <ProductPrice price={price} rating={4.9} />
             </div>
 
             {/* Description */}
@@ -215,55 +163,31 @@ export default function ProductPage({ params }: ProductPageProps) {
 
             {/* Quantity and Add to Cart */}
             <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-bold text-bbd-ivory mb-2">
-                  Quantity
-                </label>
-                <div className="flex items-center space-x-3">
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-10 h-10 bg-bbd-charcoal/50 border border-bbd-ivory/20 rounded-md flex items-center justify-center text-bbd-ivory hover:bg-bbd-orange hover:text-bbd-black transition-all"
-                  >
-                    -
-                  </button>
-                  <span className="w-16 text-center text-bbd-ivory font-bold">{quantity}</span>
-                  <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="w-10 h-10 bg-bbd-charcoal/50 border border-bbd-ivory/20 rounded-md flex items-center justify-center text-bbd-ivory hover:bg-bbd-orange hover:text-bbd-black transition-all"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
+              <ProductQuantitySelector quantity={quantity} onQuantityChange={setQuantity} />
+
+              <AddToCartButton
+                variantId={selectedVariant?.id || ''}
+                quantity={quantity}
+                disabled={!selectedVariant}
+                buttonText="ADD TO CART"
+                showPrice={false}
+                className="mb-3 bg-bbd-black border-2 border-bbd-orange text-bbd-orange hover:bg-bbd-orange hover:text-bbd-black"
+              />
 
               <button
+                onClick={() => {
+                  if (!selectedVariant) return;
+                  const checkoutUrl = `https://${process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN}/cart/${selectedVariant.id.split('/').pop()}:${quantity}`;
+                  window.location.href = checkoutUrl;
+                }}
                 disabled={!selectedVariant}
                 className="w-full bg-gradient-to-r from-bbd-orange to-bbd-gold text-bbd-black font-bold text-lg py-4 rounded-lg hover:shadow-2xl hover:shadow-bbd-orange/25 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                GET PRODUCT NOW - {formatPrice(price.amount, price.currencyCode)}
+                BUY NOW - {formatPrice(price.amount, price.currencyCode)}
               </button>
 
               {/* Trust Indicators */}
-              <div className="grid grid-cols-3 gap-4 pt-6 border-t border-bbd-ivory/10">
-                <div className="text-center">
-                  <svg className="w-8 h-8 text-bbd-orange mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  <p className="text-xs text-bbd-ivory/60">Instant Access</p>
-                </div>
-                <div className="text-center">
-                  <svg className="w-8 h-8 text-bbd-orange mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  <p className="text-xs text-bbd-ivory/60">30-Day Guarantee</p>
-                </div>
-                <div className="text-center">
-                  <svg className="w-8 h-8 text-bbd-orange mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  <p className="text-xs text-bbd-ivory/60">Secure Checkout</p>
-                </div>
-              </div>
+              <ProductTrustIndicators />
             </div>
           </div>
         </div>

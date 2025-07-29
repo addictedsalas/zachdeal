@@ -137,7 +137,6 @@ const sampleMealPlan: MealPlan = {
 export function WorkoutProvider({ children }: { children: React.ReactNode }) {
   const [completedWorkouts, setCompletedWorkouts] = useState<Set<string>>(new Set())
   const [workoutCards, setWorkoutCards] = useState<WorkoutCard[]>(() => generateWeeklyWorkouts())
-  const [todaysMeals, setTodaysMeals] = useState<MealPlan>(sampleMealPlan)
 
   // Get today's workout
   const todaysWorkout = workoutCards.find(card => {
@@ -199,7 +198,7 @@ export function WorkoutProvider({ children }: { children: React.ReactNode }) {
     <WorkoutContext.Provider value={{
       completedWorkouts,
       workoutCards,
-      todaysMeals,
+      todaysMeals: sampleMealPlan,
       todaysWorkout,
       toggleWorkoutCompletion,
       isWorkoutCompleted,

@@ -42,7 +42,7 @@ export default function ContactPage() {
             </h1>
             <p className="text-xl text-bbd-ivory/80 max-w-3xl mx-auto mb-8">
               Ready to transform your fitness journey? Have questions about our programs or supplements? 
-              We're here to help you achieve your goals.
+              We&apos;re here to help you achieve your goals.
             </p>
             <div className="flex items-center justify-center space-x-8 text-sm text-bbd-ivory/60">
               <div className="flex items-center">
@@ -176,7 +176,7 @@ export default function ContactPage() {
                   </div>
                   <h3 className="font-bebas text-3xl text-bbd-ivory mb-3">MESSAGE SENT!</h3>
                   <p className="text-bbd-ivory/70 mb-8 text-lg">
-                    Thanks for reaching out! We'll get back to you within 24 hours.
+                    Thanks for reaching out! We&apos;ll get back to you within 24 hours.
                   </p>
                   <button
                     onClick={() => {
@@ -199,7 +199,7 @@ export default function ContactPage() {
                 READY TO START YOUR <span className="text-bbd-orange">TRANSFORMATION?</span>
               </h2>
               <p className="text-lg text-bbd-ivory/80 mb-8 max-w-2xl mx-auto">
-                Don't wait for the perfect moment. Your fitness journey starts today with Built By Deal's proven programs and premium supplements.
+                Don&apos;t wait for the perfect moment. Your fitness journey starts today with Built By Deal&apos;s proven programs and premium supplements.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link

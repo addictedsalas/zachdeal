@@ -105,9 +105,9 @@ export default function SupplementsCTA() {
             <p className="text-bbd-ivory/60 text-sm mb-4">Trusted by professional athletes and fitness enthusiasts worldwide</p>
             <div className="flex justify-center items-center space-x-8 opacity-60">
               {/* Placeholder for brand logos or testimonials */}
-              <div className="text-bbd-ivory/40 text-xs">★★★★★ "Best supplements I've ever used" - Mike T.</div>
-              <div className="text-bbd-ivory/40 text-xs">★★★★★ "Amazing results in just 4 weeks" - Sarah L.</div>
-              <div className="text-bbd-ivory/40 text-xs">★★★★★ "Quality you can trust" - David R.</div>
+              <div className="text-bbd-ivory/40 text-xs">★★★★★ &quot;Best supplements I&apos;ve ever used&quot; - Mike T.</div>
+              <div className="text-bbd-ivory/40 text-xs">★★★★★ &quot;Amazing results in just 4 weeks&quot; - Sarah L.</div>
+              <div className="text-bbd-ivory/40 text-xs">★★★★★ &quot;Quality you can trust&quot; - David R.</div>
             </div>
           </div>
         </div>

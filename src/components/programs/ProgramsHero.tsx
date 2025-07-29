@@ -1,6 +1,5 @@
 "use client";
 
-import Link from 'next/link';
 
 export default function ProgramsHero() {
   return (
@@ -34,7 +33,7 @@ export default function ProgramsHero() {
 
         {/* Subheading */}
         <p className="text-xl sm:text-2xl text-bbd-ivory/95 mb-8 max-w-4xl mx-auto leading-relaxed drop-shadow-lg">
-          Unlock your potential with <span className="text-bbd-gold font-semibold">Built By Deal's</span> proven digital programs. 
+          Unlock your potential with <span className="text-bbd-gold font-semibold">Built By Deal&apos;s</span> proven digital programs. 
           From beginner-friendly routines to advanced transformation protocols, find the perfect program to achieve your goals.
         </p>
 
@@ -56,7 +55,7 @@ export default function ProgramsHero() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Link
+          {/* <Link
             href="/plans"
             className="inline-flex items-center px-8 py-4 bg-bbd-orange text-bbd-black font-bold text-lg rounded-md hover:bg-bbd-gold transition-all duration-200 transform hover:scale-105 min-w-[220px] justify-center drop-shadow-lg"
           >
@@ -64,7 +63,7 @@ export default function ProgramsHero() {
             <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
-          </Link>
+          </Link> */}
           
           <button
             onClick={() => document.getElementById('static-programs')?.scrollIntoView({ behavior: 'smooth' })}

@@ -91,7 +91,18 @@ export const dbHelpers = {
     user_id: string
     template_id: string
     scheduled_date?: string
-    workout_data?: any
+    workout_data?: {
+      exercises: {
+        name: string
+        sets: number
+        reps: number
+        weight_lbs?: number
+        duration_seconds?: number
+        distance_meters?: number
+        rpe?: number
+        notes?: string
+      }[]
+    }
   }) {
     const { data, error } = await supabase
       .from('workout_instances')
@@ -141,7 +152,7 @@ export const dbHelpers = {
     user_id: string
     meal_type: 'breakfast' | 'lunch' | 'dinner' | 'snack'
     meal_date: string
-    food_items: any
+    food_items: { name: string; calories: number; protein_g: number; carbs_g: number; fat_g: number }[]
     total_calories?: number
     total_protein_g?: number
     total_carbs_g?: number
@@ -191,7 +202,6 @@ export const dbHelpers = {
   async logEvent(eventData: {
     user_id?: string
     event_type: string
-    event_data?: any
     ip_address?: string
     user_agent?: string
   }) {
