@@ -162,7 +162,7 @@ export default function Footer() {
         </div>
 
         {/* Newsletter Section */}
-        <div className="border-t border-bbd-charcoal/50 pt-8 mb-8">
+        {/* <div className="border-t border-bbd-charcoal/50 pt-8 mb-8">
           <div className="max-w-md mx-auto text-center lg:text-left lg:mx-0">
             <h3 className="font-display text-2xl text-bbd-ivory mb-2">
               JOIN THE BUILT BY DEAL COMMUNITY
@@ -184,7 +184,7 @@ export default function Footer() {
               </button>
             </form>
           </div>
-        </div>
+        </div> */}
 
         {/* Bottom Bar */}
         <div className="border-t border-bbd-charcoal/50 pt-8 text-center">
